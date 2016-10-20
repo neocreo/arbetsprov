@@ -1,0 +1,217 @@
+body {
+  padding-top: 50px;
+}
+#main {
+  padding: 90px 15px;
+  text-align: center;
+  min-height: 640px;
+}
+/*helpers*/
+.show{
+    display: block;
+}
+a{
+    transition: all 0.4s ease-in-out;
+}
+/*Branding*/
+.navbar-transparent{
+    padding: 20px 0;
+}
+.navbar-brand{
+    background: transparent url('../img/branding.svg') left center no-repeat;
+    background-size: 90%;
+    height: 50px;
+    width: 350px;
+    text-indent: -3000px;
+}
+#footer{
+    background-color: #9b59b6;
+    text-align: center;
+    padding:  20px;
+    border-top:  10px solid #8e44ad;
+    color: #ffffff;
+    text-shadow: 1px 2px 5px #8e44ad;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background-image: -webkit-linear-gradient(top,#9b59b6 0,#8e44ad 100%);
+    background-image: -o-linear-gradient(top,#9b59b6 0,#8e44ad 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#9b59b6),to(#8e44ad));
+    background-image: linear-gradient(to bottom,#9b59b6 0,#8e44ad 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff337ab7', endColorstr='#ff265a88', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    border-color: #8e44ad;
+}
+.btn-primary.active, .btn-primary:active {
+    background-color: #8e44ad;
+    border-color: #8e44ad;
+}
+.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover {
+    color: #fff;
+    background-color: #9b59b6;
+    border-color: #8e44ad;
+}
+.btn-primary:focus, .btn-primary:hover {
+    background-color: #8e44ad;
+    background-position: 0 -15px;
+}
+.btn-primary.disabled, .btn-primary.disabled.active, .btn-primary.disabled.focus, .btn-primary.disabled:active, .btn-primary.disabled:focus, .btn-primary.disabled:hover, .btn-primary[disabled], .btn-primary[disabled].active, .btn-primary[disabled].focus, .btn-primary[disabled]:active, .btn-primary[disabled]:focus, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary, fieldset[disabled] .btn-primary.active, fieldset[disabled] .btn-primary.focus, fieldset[disabled] .btn-primary:active, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:hover {
+    background-color: #cecece;
+    border-color: #cecece;
+    background-image: none;
+}
+
+/*Let's make a pretty gallery presentation*/
+.flex-columns{
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: flex-start;
+
+}
+.flex-columns > *{
+	flex:  0 1 auto; 
+	align-self: auto; 
+	display: flex;
+	align-items: center;
+	
+
+}
+/*.flex-columns  > * > *{
+	display: flex;
+	flex:  0 1 auto; 
+	align-self: stretch; 
+}*/
+
+
+
+.flex-columns .col-md-1,
+.flex-columns .col-md-10,
+.flex-columns .col-md-11,
+.flex-columns .col-md-12,
+.flex-columns .col-md-2,
+.flex-columns .col-md-3,
+.flex-columns .col-md-4,
+.flex-columns .col-md-5,
+.flex-columns .col-md-6,
+.flex-columns .col-md-7,
+.flex-columns .col-md-8,
+.flex-columns .col-md-9{
+	float: none;
+ }
+ .thumbnail{
+    position: relative;
+    overflow: hidden;
+ }
+ .thumbnail.added{
+    background-color:  #9b59b6;
+    border-color: #8e44ad;
+ }
+ .thumbnail .glyphicon-remove-sign{
+    display: none;
+ }
+
+ /*Toolbox*/
+ .toolbox{
+   
+    opacity: 0;
+    background: rgba(255,255,255,0.55);
+    /* width: 100%; */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+ }
+ .thumbnail:hover .toolbox{
+    
+    opacity: 1;
+ }
+ .toolbox a{
+    display: block;
+    width: 100%;
+    line-height: 77px;
+    color: #8e44ad;
+    font-size: 36px;
+    background-color: rgba(255,255,255,0);
+ }
+ .toolbox a:hover{
+    color:#9b59b6;
+    background-color: rgba(255,255,255,0.8);
+ }
+
+ /*Lightbox*/
+ .columns{
+     transition: all 0.5s ease-in-out;
+ 
+ }
+ #lightbox{
+    padding: 60px 0 0 ;
+    position:fixed; /* keeps the lightbox window in the current viewport */
+    top:0; 
+    left:0; 
+    width:100%; 
+    height:100%; 
+    background:rgba(0,0,0,0.65); 
+    text-align:center;
+    display: flex;
+ flex-flow: column;
+ justify-content: center;
+ align-items: center;
+ align-content: center;
+ overflow: auto;
+ }
+ #lightbox > *{
+     flex:  0 1 auto; /*shorthand - first if an element shall grow, then shrink and the base size*/
+     align-self: auto; /*override align-items*/
+     /*Note that float, clear and vertical-align have no effect on a flex item.*/
+ 
+ }
+ #lightbox p {
+   
+    color:#fff; 
+     
+    font-size:18px; 
+}
+#lightbox img {
+	border: 10px solid #ffffff;
+    box-shadow:0 0 25px #111;
+    -webkit-box-shadow:0 0 25px #111;
+    -moz-box-shadow:0 0 25px #111;
+    max-width:95%;
+    
+}
+/*Collection*/
+#collection{
+    clear: both;
+    padding: 20px;
+    background-color: #9b59b6;
+}
+#collection a{
+    position: relative;
+    overflow: hidden;
+    margin: 5px;
+}
+#collection a span{
+    opacity: 0;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.65);
+    color: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    font-size: 50px;
+}
+#collection a:hover span{
+    opacity: 1;
+}
+
+#collection a img{
+    width: 50px;
+    height: auto;
+}
+
+

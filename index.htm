@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><![endif]--> 
+		<title>Daniels SPI Gallery Creator</title>
+		<!-- mobile meta (hooray!) -->
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<!--  Local scripts and styles - of course you will move this to a separate file-->
+		
+		<!-- Yes, you can stash CSS  in your reset file - or delete it-->
+		<style type="text/css">
+			article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section  { display:block; }
+		</style>
+		<!-- Local Stylesheets -->
+		<link rel="stylesheet" href="library/css/style.css" />
+
+	</head>
+	<body>
+		<nav class="navbar navbar-transparent navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+         
+          <a class="navbar-brand" href="#">Daniel's Gallery Creator</a>
+        </div>
+	     <form id="flickrForm" action="index.htm" method="post" accept-charset="utf-8" class="navbar-form navbar-right js-form-flickr-search" role="search">
+	     	<div class="form-group">
+	     		<div class="input-group">
+			      <input type="search" name="query" id="query" class="form-control js-query" placeholder="What are you looking for" value="">
+			      <span class="input-group-btn">
+			        <button class="btn btn-primary js-search-submit" type="button">Search</button>
+			      </span>
+			    </div><!-- /input-group -->
+	     	</div>
+	     	    
+	     </form>
+	     <div id="collection-group" class="navbar-right col-md-3">
+	        <button type="button" id="gallery" class="js-gallery btn-primary  btn navbar-btn pull-right" disabled="disabled"><span class="glyphicon glyphicon-triangle-top
+"></span>
+	        Collection  <span class="badge" title="Number of images">0</span>
+			</button>
+	     	<div id="collection" class="js-collection hidden flex-columns ">
+	     		<button type="button" id="display_gallery" class="js-displaygallery btn-default btn btn-block text-center "> Display Gallery</button>
+	     	</div>
+	     </div>
+       
+      </div>
+    </nav>
+	<div class="container" id="main">
+	<div id="results" class=" js-results">
+		<div class="jumbotron text-center">
+			<h1>Step right up, kids!</h1>
+			<p>It is a very simple image search for <br><img src="library/img/220px-Flickr_logo.png" alt="Flickr"></p>
+			<p>To start, please use the search box at the top of the page</p>
+			<p><small>HTML, CSS, javascript, Bootstrap</small></p>
+		</div>
+		
+
+	</div>
+	
+
+    </div><!-- /.container -->
+    <div id="footer">
+    	&copy; 2016 Daniel Hansson - Just a work example
+    </div>
+ 
+		<!-- Global Javascript -->
+		<!-- jQuery 
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<!-- Latest compiled and minified JavaScript 
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		-->
+		<script type="text/javascript">
+			/*Are we ready*/
+			document.addEventListener('DOMContentLoaded', function() {
+				
+			
+				/*let's save some time*/
+				function spi(Selector) {
+				    return document.querySelectorAll(Selector)
+				}
+			
+				
+				//Variables to use
+				var searchInput = spi('.js-query')[0];
+				var searchButton = spi('.js-search-submit')[0];
+				var searchResults = spi('.js-results')[0];
+				var searchForm = spi('#flickrForm')[0];
+				var collectionButton = spi('.js-gallery')[0];
+				var displayButton = spi('.js-displaygallery')[0];
+				var collectionBasket = spi('.js-collection')[0];
+
+				//Search Flickr - trigger searchFlickr
+				//searchButton.onclick() = function(){	};
+				searchForm.addEventListener('submit', function (e){
+					e.preventDefault();
+					var searchVal = searchInput.value;
+					searchFlickr(searchVal);
+					return false;
+				})
+				searchButton.addEventListener('click', function (e){
+					e.preventDefault();
+					var searchVal = searchInput.value;
+					searchFlickr(searchVal);
+					return false;
+				})
+
+				//get images - show them in display
+				function searchFlickr(flickrSearchVal){
+					//flickrSearchVal = 'house';
+					flickrUrl = 'https://api.flickr.com/services/rest/?&api_key=25d571abfb757197ddae3e28a7152fb0';
+					flickrUrl += "&method=flickr.photos.search";
+			        flickrUrl += "&text="+flickrSearchVal;
+			        flickrUrl += "&content_type=1";
+			        flickrUrl += "&per_page=50";
+			        flickrUrl += "&format=json";
+			        flickrUrl += "&nojsoncallback=true";
+
+					var request = new XMLHttpRequest();
+					request.open('GET', flickrUrl, true);
+
+					//remove previous results
+					searchResults.innerHTML = '';
+					searchResults.classList.add('flex-columns');
+
+					request.onload = function() {
+					  if (this.status >= 200 && this.status < 400) {
+					    // Success!
+					    var data = JSON.parse(this.response);
+
+					    //for each result, pop out an image
+					    Array.prototype.forEach.call(data['photos']['photo'], function(el, i){
+					    	var resultTarget = spi('.js-results')[0];
+					    	var thumbTitle = el['title']
+					    	var thumbUrl = 'https://farm'+el['farm']+'.staticflickr.com/'+el['server']+'/'+el['id']+'_'+el['secret']+'_q.jpg';
+					    	var linkUrl = 'https://farm'+el['farm']+'.staticflickr.com/'+el['server']+'/'+el['id']+'_'+el['secret']+'_h.jpg';
+				
+					    	var thumbWrap = document.createElement('div');
+					    	thumbWrap.classList.add('col-sm-4','col-md-3','col-lg-2');
+					    	thumbWrap.innerHTML = '<div  class="thumbnail"><img src="'+thumbUrl+'" alt="'+thumbTitle+'" class="img-responsive"><div class="toolbox"><a  href="'+linkUrl+'" class="js-addto-gallery" data-photoid="'+el['id']+'" data-photosec="'+el['secret']+'" data-thumburl="'+thumbUrl+'"><span class="glyphicon glyphicon-heart"></span></a><a href="'+linkUrl+'" alt="'+thumbTitle+'" title="'+thumbTitle+'" class="js-lightbox" data-photoid="'+el['id']+'" data-photosec="'+el['secret']+'"><span class="glyphicon glyphicon-eye-open"></span></a></div></div>';
+					    	
+							resultTarget.appendChild(thumbWrap);
+           					
+						});
+							//Run lightbox script
+							slimLight();
+							//Run addtobasket script
+							addtoGallery();
+
+					  } else {
+					    // We reached our target server, but it returned an error
+					    //Give an error message if empty
+
+					  }
+					};
+
+					request.onerror = function() {
+					  // There was a connection error of some sort
+					};
+
+					request.send();		
+				}
+
+				//Load more results
+				function loadMore(){
+
+				}
+				//trigger LoadMore
+
+				//Select the images and add to gallery - save before new search
+				function addtoGallery() {
+
+
+				var galleryButtons = spi('.js-addto-gallery');
+
+					
+					Array.prototype.forEach.call(galleryButtons, function(el, i){
+						
+						el.addEventListener('click', function(e){
+							e.preventDefault();
+						
+							var imgLink = this.getAttribute('href');
+							var imgTitle = this.getAttribute('title');
+							var imgThumb = this.getAttribute('data-thumburl');
+							var collectionImages = spi('.js-collection a');
+							var numberOfImages = collectionImages.length;
+							var collectionCounter = spi('.js-gallery span')[1];
+
+							//remove the standard state if present
+							if (collectionButton.getAttribute('disabled') != null) {
+								collectionButton.removeAttribute('disabled');
+							}
+							//Grab the image
+							var basketWrap = document.createElement('a');
+							basketWrap.setAttribute('href', imgLink);
+							basketWrap.id = 'collection_';
+							basketWrap.id += numberOfImages+1;
+							
+							//Create basket element
+							basketWrap.innerHTML = '<span class="glyphicon glyphicon-remove-sign"></span><img class="thumb-mini" src="'+imgThumb+'" alt="'+imgTitle+'">';
+							//add to basket for safe keeping
+							collectionBasket.appendChild(basketWrap);
+							//update the counter
+							collectionCounter.innerHTML = numberOfImages+1;
+							//Mark the image as added to collection
+							var parentThumbnail = el.parentElement.closest('.thumbnail');
+							parentThumbnail.classList.add('added');
+
+							return false;
+							
+						})
+
+					});
+
+				}
+
+
+
+				//Show the collected gallery
+				function showGallery(){
+					var collectionButtonArrow = spi('.js-gallery .glyphicon')[0];
+					collectionButtonArrow.classList.toggle('glyphicon-triangle-top');
+					collectionButtonArrow.classList.toggle('glyphicon-triangle-bottom');
+					collectionBasket.classList.toggle('hidden');
+				}
+				//Trigger showGallery
+				collectionButton.addEventListener('click',function(){
+					
+					showGallery();
+					removeImageFromGallery();
+				})
+
+				//remove image from gallery
+				function removeImageFromGallery(){
+
+					var collectionRemoveImages = spi('.js-collection a');
+					Array.prototype.forEach.call(collectionRemoveImages, function(el, i){
+						el.addEventListener('click', function(e){
+							e.preventDefault();
+							var galleryLink = this;
+							galleryLink.parentNode.removeChild(galleryLink);
+							
+						});
+					});
+				}
+				//Display Gallery in the main area
+				function displayGallery(){
+					//Get all images
+					var allImages = spi('.js-collection a');
+					//Remove main content
+						var resultTarget = spi('.js-results')[0];
+						resultTarget.innerHTML = '';
+					Array.prototype.forEach.call(allImages, function(el, i){
+						//Clone each of them into the main area
+						var clone = el.cloneNode(true);
+						//remove delete button - do not want it in the main
+						var deletebutton = clone.querySelectorAll('.glyphicon')[0];
+						deletebutton.parentNode.removeChild(deletebutton);
+						//Add lightbox to full image
+						clone.classList.add('js-lightbox');
+					
+						//Add to content
+						var thumbWrap = document.createElement('div');
+					    	thumbWrap.classList.add('col-sm-4','col-md-3','col-lg-2');
+					    	thumbWrap.innerHTML = '<div class="thumbnail"></div>'
+					    var thethumb = thumbWrap.querySelectorAll('.thumbnail')[0];
+					    	thethumb.appendChild(clone);
+							resultTarget.appendChild(thumbWrap);
+						
+					});
+					showGallery();
+
+				}
+				//Trigger DisplayGallery
+				displayButton.addEventListener('click',function(){
+
+					displayGallery();
+					slimLight();
+				})
+
+				//Lightbox
+				function slimLight(){
+					//Check if it exists
+					if (spi('#lightbox').length != 1) {
+						//If not, create lightbox elements
+						var lightboxWrap = document.createElement('div');
+						lightboxWrap.id = 'lightbox';
+						lightboxWrap.classList.add('hidden')
+						lightboxWrap.innerHTML = '<p>Click anywhere to close <span class="glyphicon glyphicon-remove-sign js-close"></span></p><img src="http://placehold.it/1600x1600" alt="">'
+						document.body.appendChild(lightboxWrap);
+					}
+
+					//on click
+					var lightboxWrapper = spi('#lightbox')[0];
+					var lightboxImage = spi('#lightbox img')[0];
+					var lightboxButtons = spi('.js-lightbox');
+					Array.prototype.forEach.call(lightboxButtons, function(el, i){
+						el.addEventListener('click', function(e){
+							e.preventDefault();
+							var imgLink = el.getAttribute('href');
+							var imgTitle = el.getAttribute('title');
+							//replace img source
+							lightboxImage.setAttribute('src', imgLink)
+							//replace alt-tag
+							lightboxImage.setAttribute('alt', imgTitle)
+							//show large image
+							lightboxWrapper.classList.remove('hidden');
+							lightboxWrapper.classList.add('show');
+							return false;
+							
+						})
+
+					});
+
+					//on click on close button /anywhere outside the preview
+					lightboxWrapper.addEventListener('click', function(){
+						lightboxWrapper.classList.remove('show');
+						lightboxWrapper.classList.add('hidden');
+					})
+					//hide again
+
+				}
+				//slimLight();
+				}); //End fun
+
+		</script>
+	</body>
+</html>
